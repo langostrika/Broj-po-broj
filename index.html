@@ -13,7 +13,6 @@
   header p{font-size:.75rem;color:#666;margin-top:2px}
   #date-label{font-size:.7rem;color:#999;text-align:center;margin-bottom:8px}
 
-  /* grid */
   #grid-wrap{display:flex;justify-content:center;margin:8px 0}
   #grid{display:grid;gap:2px;background:#ccc;border:2px solid #999;border-radius:6px;overflow:hidden;touch-action:none;user-select:none}
   .cell{background:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;color:#333;position:relative;cursor:crosshair;transition:background .08s}
@@ -21,25 +20,19 @@
   .cell.path{background:#d4eaff}
   .cell.active{background:#a8d4ff}
   .cell.complete{background:#b6f0c8}
-  .cell.error{background:#ffd4d4}
   .cell.start{background:#ffe9a0}
   .cell.end{background:#ffd080}
-
-  /* connector lines inside cells */
   .cell svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 
-  /* info bar */
   #info{display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:#555;padding:4px 2px;margin-bottom:6px}
   #moves-val{font-weight:700;color:#333}
 
-  /* bottom buttons */
   .btn-row{display:flex;gap:8px;margin:8px 0}
   .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .15s}
   .btn:active{opacity:.75}
   #btn-reset{background:#e8e8e2;color:#333}
   #btn-hint{background:#d4eaff;color:#1a5a8a}
 
-  /* success overlay */
   #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;justify-content:center;align-items:center}
   #overlay.show{display:flex}
   #modal{background:#fff;border-radius:16px;padding:28px 24px;text-align:center;max-width:300px;width:90%}
@@ -49,10 +42,8 @@
   #share-btn{background:#1a1a1a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%}
   #play-again{background:#e8e8e2;color:#333;border:none;border-radius:8px;padding:10px 20px;font-size:.85rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px}
 
-  /* loading / error */
   #status{text-align:center;padding:40px 20px;color:#777;font-size:.9rem}
 
-  /* already played */
   #played-msg{display:none;text-align:center;padding:20px;background:#fff;border-radius:10px;margin:8px 0}
   #played-msg h3{font-size:1rem;margin-bottom:6px}
   #played-msg p{font-size:.8rem;color:#666}
@@ -86,7 +77,6 @@
   </div>
 </div>
 
-<!-- Success overlay -->
 <div id="overlay">
   <div id="modal">
     <div class="big">🎉</div>
@@ -97,89 +87,62 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// ── CONFIG ───────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-const TABLE = 'zip_puzzles';
-const STORAGE_KEY = 'zip_played';
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const PUZZLE_URL = 'https://raw.githubusercontent.com/langostrika/Broj-po-broj/main/puzzle.json';
+const STORAGE_KEY = 'broj_po_broj_played';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let puzzle = null, size = 5;
-let path = [];       // [{r,c}, ...] current player path
-let dragging = false;
-let moves = 0, startTime = null, timerInterval = null;
-let hintsUsed = 0;
+let path = [], dragging = false;
+let moves = 0, startTime = null, timerInterval = null, hintsUsed = 0;
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
   const today = todayStr();
   document.getElementById('date-label').textContent = formatDate(today);
 
-  // check played
-  const played = getPlayed();
-  if (played && played.date === today) {
-    showPlayedToday(played);
+  try {
+    const res = await fetch(PUZZLE_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    puzzle = await res.json();
+  } catch(e) {
+    document.getElementById('status').textContent = 'Nema dostupne zagonetke. Probaj sutra!';
     return;
   }
 
-  const { data, error } = await sb
-    .from(TABLE)
-    .select('*')
-    .eq('active', true)
-    .eq('date', today)
-    .single();
-
-  if (error || !data) {
-    // fallback: latest active
-    const { data: d2 } = await sb.from(TABLE).select('*').eq('active', true).order('created_at', { ascending: false }).limit(1).single();
-    if (!d2) { document.getElementById('status').textContent = 'Nema dostupne zagonetke. Probaj sutra!'; return; }
-    puzzle = d2;
-  } else {
-    puzzle = data;
-  }
-
+  const played = getPlayed();
   document.getElementById('status').style.display = 'none';
   document.getElementById('game').style.display = '';
   size = puzzle.grid_size;
   document.getElementById('grid-size-label').textContent = size + '×' + size;
   buildGrid();
+
+  if (played && played.date === puzzle.date) {
+    renderSolution(played.solution);
+    document.getElementById('played-msg').style.display = 'block';
+    return;
+  }
+
   startTimer();
 }
 
-// ── DATE UTILS ───────────────────────────────────────────────────────────────
-function todayStr() { return new Date().toISOString().slice(0, 10); }
+function todayStr() { return new Date().toISOString().slice(0,10); }
 function formatDate(s) {
   const d = new Date(s + 'T12:00:00');
-  return d.toLocaleDateString('sr-Latn-RS', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return d.toLocaleDateString('sr-Latn-RS', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }
 function getPlayed() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; } }
 function savePlayed(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
-function showPlayedToday(played) {
-  document.getElementById('status').style.display = 'none';
-  document.getElementById('game').style.display = '';
-  // rebuild grid in read-only mode
-  if (played.puzzleId) {
-    sb.from(TABLE).select('*').eq('id', played.puzzleId).single().then(({ data }) => {
-      if (data) { puzzle = data; size = data.grid_size; buildGrid(); renderSolution(played.solution); }
-    });
-  }
-  document.getElementById('played-msg').style.display = 'block';
-}
-
-// ── GRID BUILD ───────────────────────────────────────────────────────────────
 function buildGrid() {
   const g = document.getElementById('grid');
   const vw = Math.min(window.innerWidth - 40, 440);
-  const cellSize = Math.floor((vw - (size - 1) * 2 - 4) / size);
+  const cellSize = Math.floor((vw - (size-1)*2 - 4) / size);
   g.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
   g.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
   g.innerHTML = '';
-
-  const numbers = puzzle.numbers; // [{r, c, n}]
+  const numbers = puzzle.numbers;
+  const maxN = Math.max(...numbers.map(n => n.n));
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       const cell = document.createElement('div');
@@ -190,7 +153,7 @@ function buildGrid() {
         cell.textContent = num.n;
         cell.classList.add('numbered');
         if (num.n === 1) cell.classList.add('start');
-        if (num.n === Math.max(...numbers.map(x => x.n))) cell.classList.add('end');
+        if (num.n === maxN) cell.classList.add('end');
       }
       g.appendChild(cell);
     }
@@ -199,132 +162,99 @@ function buildGrid() {
 }
 
 function getCell(r, c) { return document.querySelector(`[data-r="${r}"][data-c="${c}"]`); }
-function getNumbers() { return puzzle.numbers; }
-function maxNum() { return Math.max(...getNumbers().map(n => n.n)); }
-
-// ── PATH LOGIC ────────────────────────────────────────────────────────────────
-function cellIndex(r, c) { return r * size + c; }
-function adjacent(a, b) { return Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1; }
-
-function inPath(r, c) { return path.some(p => p.r === r && p.c === c); }
-
-function pathIndexOf(r, c) { return path.findIndex(p => p.r === r && p.c === c); }
-
-function isValidNext(r, c) {
-  if (r < 0 || r >= size || c < 0 || c >= size) return false;
-  if (inPath(r, c)) return false;
-  // must be adjacent to last in path
-  const last = path[path.length - 1];
-  if (!adjacent(last, { r, c })) return false;
-  // if cell is a numbered cell, must be next number in sequence
-  const nums = getNumbers();
-  const num = nums.find(n => n.r === r && n.c === c);
-  if (num) {
-    const lastNum = nums.find(n => n.r === last.r && n.c === last.c);
-    // stepping onto a number: only allowed if it's exactly next
-    const currentSeq = getCurrentSeqNum();
-    if (num.n !== currentSeq + 1) return false;
-  }
-  return true;
-}
+function adjacent(a, b) { return Math.abs(a.r-b.r) + Math.abs(a.c-b.c) === 1; }
+function inPath(r, c) { return path.some(p => p.r===r && p.c===c); }
+function pathIndexOf(r, c) { return path.findIndex(p => p.r===r && p.c===c); }
 
 function getCurrentSeqNum() {
-  // find the highest numbered cell in current path
-  const nums = getNumbers();
   let maxN = 0;
   for (const p of path) {
-    const n = nums.find(n => n.r === p.r && n.c === p.c);
+    const n = puzzle.numbers.find(n => n.r===p.r && n.c===p.c);
     if (n && n.n > maxN) maxN = n.n;
   }
   return maxN;
 }
 
+function isValidNext(r, c) {
+  if (r<0||r>=size||c<0||c>=size) return false;
+  if (inPath(r,c)) return false;
+  const last = path[path.length-1];
+  if (!adjacent(last,{r,c})) return false;
+  const num = puzzle.numbers.find(n => n.r===r && n.c===c);
+  if (num) {
+    const currentSeq = getCurrentSeqNum();
+    if (num.n !== currentSeq+1) return false;
+  }
+  return true;
+}
+
 function startPath(r, c) {
-  // can only start from number 1
-  const nums = getNumbers();
-  const num = nums.find(n => n.r === r && n.c === c);
+  const num = puzzle.numbers.find(n => n.r===r && n.c===c);
   if (!num || num.n !== 1) return;
-  path = [{ r, c }];
+  path = [{r,c}];
   moves++;
   document.getElementById('moves-val').textContent = moves;
   renderPath();
 }
 
 function extendPath(r, c) {
-  if (path.length === 0) return;
-  // backtrack?
+  if (!path.length) return;
   const idx = pathIndexOf(r, c);
-  if (idx !== -1) {
-    path = path.slice(0, idx + 1);
-    renderPath(); return;
-  }
-  if (!isValidNext(r, c)) return;
-  path.push({ r, c });
+  if (idx !== -1) { path = path.slice(0, idx+1); renderPath(); return; }
+  if (!isValidNext(r,c)) return;
+  path.push({r,c});
   renderPath();
   checkWin();
 }
 
 function renderPath() {
-  // reset all cells
   document.querySelectorAll('.cell').forEach(el => {
-    el.classList.remove('path', 'active', 'complete', 'error');
+    el.classList.remove('path','active','complete','error');
     el.querySelectorAll('svg').forEach(s => s.remove());
   });
-  // color path
-  for (let i = 0; i < path.length; i++) {
-    const { r, c } = path[i];
-    const el = getCell(r, c);
+  for (let i=0; i<path.length; i++) {
+    const {r,c} = path[i];
+    const el = getCell(r,c);
     if (!el) continue;
-    if (i === path.length - 1) el.classList.add('active');
+    if (i===path.length-1) el.classList.add('active');
     else el.classList.add('path');
-    // draw connector lines
-    drawConnectors(el, r, c, i);
+    drawConnectors(el,r,c,i);
   }
 }
 
 function drawConnectors(el, r, c, i) {
-  const prev = i > 0 ? path[i - 1] : null;
-  const next = i < path.length - 1 ? path[i + 1] : null;
+  const prev = i>0 ? path[i-1] : null;
+  const next = i<path.length-1 ? path[i+1] : null;
   if (!prev && !next) return;
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 10 10');
-  const line = (x1, y1, x2, y2) => {
-    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l.setAttribute('x1', x1); l.setAttribute('y1', y1);
-    l.setAttribute('x2', x2); l.setAttribute('y2', y2);
-    l.setAttribute('stroke', '#5aabff'); l.setAttribute('stroke-width', '3');
-    l.setAttribute('stroke-linecap', 'round');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 10 10');
+  const line = (x1,y1,x2,y2) => {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke','#5aabff');l.setAttribute('stroke-width','3');
+    l.setAttribute('stroke-linecap','round');
     svg.appendChild(l);
   };
-  const cx = 5, cy = 5;
-  if (prev) {
-    const dr = r - prev.r, dc = c - prev.c;
-    line(cx, cy, cx - dc * 5, cy - dr * 5);
-  }
-  if (next) {
-    const dr = next.r - r, dc = next.c - c;
-    line(cx, cy, cx + dc * 5, cy + dr * 5);
-  }
+  const cx=5,cy=5;
+  if (prev) { const dr=r-prev.r,dc=c-prev.c; line(cx,cy,cx-dc*5,cy-dr*5); }
+  if (next) { const dr=next.r-r,dc=next.c-c; line(cx,cy,cx+dc*5,cy+dr*5); }
   el.appendChild(svg);
 }
 
 function checkWin() {
-  if (path.length !== size * size) return;
-  // check last cell is maxNum
-  const last = path[path.length - 1];
-  const nums = getNumbers();
-  const lastNum = nums.find(n => n.r === last.r && n.c === last.c);
-  if (!lastNum || lastNum.n !== maxNum()) return;
-  // win!
-  path.forEach(({ r, c }) => getCell(r, c).classList.add('complete'));
+  if (path.length !== size*size) return;
+  const last = path[path.length-1];
+  const maxN = Math.max(...puzzle.numbers.map(n=>n.n));
+  const lastNum = puzzle.numbers.find(n=>n.r===last.r&&n.c===last.c);
+  if (!lastNum || lastNum.n !== maxN) return;
+  path.forEach(({r,c}) => getCell(r,c).classList.add('complete'));
   stopTimer();
   const elapsed = timerVal();
-  const today = todayStr();
-  savePlayed({ date: today, puzzleId: puzzle.id, solution: path, moves, time: elapsed, hints: hintsUsed });
+  savePlayed({ date: puzzle.date, solution: path, moves, time: elapsed, hints: hintsUsed });
   setTimeout(() => showWin(elapsed), 400);
 }
 
-// ── TIMER ─────────────────────────────────────────────────────────────────────
 function startTimer() {
   startTime = Date.now();
   timerInterval = setInterval(() => {
@@ -333,85 +263,70 @@ function startTimer() {
 }
 function stopTimer() { clearInterval(timerInterval); }
 function timerVal() {
-  const s = Math.floor((Date.now() - startTime) / 1000);
-  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const s = Math.floor((Date.now()-startTime)/1000);
+  return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 }
 
-// ── EVENTS ────────────────────────────────────────────────────────────────────
 function attachEvents() {
   const grid = document.getElementById('grid');
   grid.addEventListener('mousedown', e => {
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
-    dragging = true;
-    path = [];
+    const cell = e.target.closest('.cell'); if (!cell) return;
+    dragging=true; path=[];
     startPath(+cell.dataset.r, +cell.dataset.c);
   });
   grid.addEventListener('mousemove', e => {
     if (!dragging) return;
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
+    const cell = e.target.closest('.cell'); if (!cell) return;
     extendPath(+cell.dataset.r, +cell.dataset.c);
   });
-  document.addEventListener('mouseup', () => { dragging = false; });
+  document.addEventListener('mouseup', () => { dragging=false; });
 
-  // touch
   grid.addEventListener('touchstart', e => {
     e.preventDefault();
-    const t = e.touches[0];
-    const cell = document.elementFromPoint(t.clientX, t.clientY)?.closest('.cell');
-    if (!cell) return;
-    dragging = true; path = [];
+    const t=e.touches[0];
+    const cell=document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell'); if(!cell) return;
+    dragging=true; path=[];
     startPath(+cell.dataset.r, +cell.dataset.c);
-  }, { passive: false });
+  },{passive:false});
   grid.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (!dragging) return;
-    const t = e.touches[0];
-    const cell = document.elementFromPoint(t.clientX, t.clientY)?.closest('.cell');
-    if (!cell) return;
+    e.preventDefault(); if(!dragging) return;
+    const t=e.touches[0];
+    const cell=document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell'); if(!cell) return;
     extendPath(+cell.dataset.r, +cell.dataset.c);
-  }, { passive: false });
-  grid.addEventListener('touchend', () => { dragging = false; });
+  },{passive:false});
+  grid.addEventListener('touchend', () => { dragging=false; });
 
-  document.getElementById('btn-reset').addEventListener('click', () => {
-    path = []; renderPath();
-  });
-
+  document.getElementById('btn-reset').addEventListener('click', () => { path=[]; renderPath(); });
   document.getElementById('btn-hint').addEventListener('click', () => {
     hintsUsed++;
-    const sol = puzzle.solution; // [{r,c}]
-    // show next correct step
-    const step = Math.min(path.length, sol.length - 1);
+    const sol = puzzle.solution;
+    const step = Math.min(path.length, sol.length-1);
     const hint = sol[step];
     const el = getCell(hint.r, hint.c);
-    if (el) { el.style.outline = '3px solid #f90'; setTimeout(() => el.style.outline = '', 1200); }
+    if (el) { el.style.outline='3px solid #f90'; setTimeout(()=>el.style.outline='',1200); }
   });
 }
 
-// ── WIN MODAL ─────────────────────────────────────────────────────────────────
 function showWin(elapsed) {
   document.getElementById('overlay').classList.add('show');
   document.getElementById('result-text').textContent =
-    `Vreme: ${elapsed} · Potezi: ${moves}${hintsUsed ? ' · Pomoći: ' + hintsUsed : ''}`;
-
+    `Vreme: ${elapsed} · Potezi: ${moves}${hintsUsed?' · Pomoći: '+hintsUsed:''}`;
   document.getElementById('share-btn').onclick = () => {
-    const txt = `Broj po broj 021.rs\n${formatDate(todayStr())}\n⏱ ${elapsed} | ${moves} potez${moves === 1 ? '' : 'a'}${hintsUsed ? ' | 💡 ' + hintsUsed : ''}\nhttps://021.rs`;
-    if (navigator.share) navigator.share({ text: txt });
+    const txt = `Broj po broj 021.rs\n${formatDate(puzzle.date)}\n⏱ ${elapsed} | ${moves} potez${moves===1?'':'a'}${hintsUsed?' | 💡 '+hintsUsed:''}\nhttps://021.rs`;
+    if (navigator.share) navigator.share({text:txt});
     else { navigator.clipboard.writeText(txt); alert('Kopirano!'); }
   };
   document.getElementById('play-again').onclick = () => {
     document.getElementById('overlay').classList.remove('show');
-    path = []; moves = 0; hintsUsed = 0;
-    document.getElementById('moves-val').textContent = 0;
+    path=[]; moves=0; hintsUsed=0;
+    document.getElementById('moves-val').textContent=0;
     renderPath(); startTimer();
   };
 }
 
 function renderSolution(sol) {
-  path = sol;
-  renderPath();
-  path.forEach(({ r, c }) => getCell(r, c)?.classList.add('complete'));
+  path=sol; renderPath();
+  path.forEach(({r,c}) => getCell(r,c)?.classList.add('complete'));
 }
 
 init();
