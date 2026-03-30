@@ -10,127 +10,168 @@
   h1{font-size:1.3rem;font-weight:700;color:#1a1a1a;margin-bottom:4px}
   .sub{color:#777;font-size:.8rem;margin-bottom:20px}
 
-  /* Login */
   #login-wrap{max-width:340px;margin:60px auto;background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
   #login-wrap h2{font-size:1.1rem;margin-bottom:16px;text-align:center}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:.8rem;color:#555;margin-bottom:4px}
-  .field input{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:7px;font-size:.9rem}
-  .field input:focus{outline:none;border-color:#5aabff}
+  .field input,select{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:7px;font-size:.9rem}
+  .field input:focus,select:focus{outline:none;border-color:#5aabff}
   .primary-btn{width:100%;padding:11px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer}
   .primary-btn:hover{background:#333}
   #login-err{color:#c00;font-size:.8rem;margin-top:8px;text-align:center}
 
-  /* App */
-  #app{display:none;max-width:900px;margin:0 auto}
+  #app{display:none;max-width:700px;margin:0 auto}
   .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
 
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
   .row .field{flex:1;min-width:120px;margin-bottom:0}
-  select,input[type=date],input[type=number]{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:7px;font-size:.85rem}
-  select:focus,input:focus{outline:none;border-color:#5aabff}
 
   .btn{padding:9px 16px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer}
   .btn-primary{background:#1a1a1a;color:#fff}
   .btn-secondary{background:#e8e8e2;color:#333}
-  .btn-danger{background:#fee;color:#c00}
-  .btn-small{padding:5px 10px;font-size:.75rem;border-radius:6px}
   .btn:hover{opacity:.85}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
 
-  /* Preview */
-  #preview-wrap{display:none}
-  #preview-grid{display:grid;gap:2px;background:#ccc;border:2px solid #999;border-radius:6px;overflow:hidden;margin:12px auto;width:fit-content}
+  #preview-wrap{display:none;margin-top:16px}
+  #preview-grid{display:grid;gap:2px;background:#ccc;border:2px solid #999;border-radius:6px;overflow:hidden;margin:12px 0;width:fit-content}
   .pcell{width:46px;height:46px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#333}
   .pcell.pnum{background:#ffe9a0}
   .pcell.ppath{background:#d4eaff}
 
-  /* Embed code */
-  #embed-box{background:#f5f5f0;border:1px solid #ddd;border-radius:8px;padding:12px;font-family:monospace;font-size:.75rem;white-space:pre-wrap;word-break:break-all;margin-top:10px;color:#333}
+  /* JSON output */
+  #json-wrap{margin-top:16px}
+  #json-box{background:#1a1a2e;color:#a8ff78;border-radius:8px;padding:14px;font-family:monospace;font-size:.72rem;white-space:pre;overflow-x:auto;max-height:260px;overflow-y:auto;line-height:1.5}
 
-  /* Puzzle list */
-  table{width:100%;border-collapse:collapse;font-size:.82rem}
-  th{text-align:left;padding:8px 10px;border-bottom:2px solid #eee;color:#555;font-weight:600}
-  td{padding:8px 10px;border-bottom:1px solid #f0f0ea}
-  tr:hover td{background:#fafaf8}
-  .badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.7rem;font-weight:600}
-  .badge-green{background:#d4f7e0;color:#1a7a40}
-  .badge-gray{background:#eee;color:#777}
+  /* Instructions */
+  .steps{counter-reset:step}
+  .step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+  .step-num{background:#1a1a1a;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;margin-top:2px}
+  .step-text{font-size:.85rem;color:#333;line-height:1.5}
+  .step-text strong{display:block;margin-bottom:2px}
+  .step-text code{background:#f0f0ea;padding:2px 6px;border-radius:4px;font-size:.8rem;font-family:monospace}
 
   #msg{padding:10px 14px;border-radius:8px;font-size:.85rem;margin-bottom:12px;display:none}
   .msg-ok{background:#d4f7e0;color:#1a7a40}
   .msg-err{background:#fee;color:#c00}
 
-  /* Generating spinner */
   .spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  .copy-btn{background:#333;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;float:right;margin-top:-2px}
+  .copy-btn:hover{background:#555}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-wrap">
   <h2>🔐 Broj po broj Admin</h2>
-  <div class="field"><label>Lozinka</label><input type="password" id="pw" placeholder="Unesi lozinku" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+  <div class="field"><label>Lozinka</label>
+    <input type="password" id="pw" placeholder="Unesi lozinku" onkeydown="if(event.key==='Enter')doLogin()"/>
+  </div>
   <button class="primary-btn" onclick="doLogin()">Prijavi se</button>
   <div id="login-err"></div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <h1>Broj po broj Admin Panel</h1>
   <p class="sub">021.rs mozgalica – upravljanje zagonetkama</p>
-
   <div id="msg"></div>
 
   <!-- GENERATE -->
   <div class="card">
-    <h2 style="font-size:1rem;margin-bottom:12px">➕ Nova zagonetka</h2>
+    <h2 style="font-size:1rem;margin-bottom:12px">➕ Generiši novu zagonetku</h2>
     <div class="row">
       <div class="field"><label>Veličina mreže</label>
-        <select id="gen-size"><option value="5">5×5</option><option value="6" selected>6×6</option></select></div>
-      <div class="field"><label>Datum</label><input type="date" id="gen-date"/></div>
+        <select id="gen-size">
+          <option value="5">5×5</option>
+          <option value="6" selected>6×6</option>
+        </select>
+      </div>
+      <div class="field"><label>Datum zagonetke</label>
+        <input type="date" id="gen-date"/>
+      </div>
       <div class="field" style="flex:0">
-        <button class="btn btn-primary" id="gen-btn" onclick="generatePuzzle()">Generiši zagonetku</button>
+        <button class="btn btn-primary" id="gen-btn" onclick="generatePuzzle()">Generiši</button>
       </div>
     </div>
+
     <div id="preview-wrap">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <strong style="font-size:.9rem">Pregled zagonetke</strong>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary btn-small" onclick="generatePuzzle()">↺ Nova</button>
-          <button class="btn btn-primary btn-small" onclick="savePuzzle()">💾 Sačuvaj</button>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong style="font-size:.9rem">Pregled</strong>
+        <button class="btn btn-secondary" style="padding:5px 12px;font-size:.75rem" onclick="generatePuzzle()">↺ Nova</button>
       </div>
       <div id="preview-grid"></div>
-      <div style="font-size:.75rem;color:#777;margin-top:4px">Plava = put rešenja · Žuta = brojevi</div>
-      <div style="margin-top:10px;font-size:.8rem;color:#555">Embed kod:</div>
-      <div id="embed-box"></div>
-      <button class="btn btn-secondary btn-small" style="margin-top:6px" onclick="copyEmbed()">📋 Kopiraj embed</button>
+      <div style="font-size:.72rem;color:#777;margin-bottom:12px">Plava = put rešenja · Žuta = brojevi</div>
+
+      <div id="json-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:.85rem;font-weight:600">puzzle.json sadržaj</span>
+          <button class="copy-btn" onclick="copyJson()">📋 Kopiraj</button>
+        </div>
+        <div id="json-box"></div>
+      </div>
     </div>
   </div>
 
-  <!-- LIST -->
+  <!-- INSTRUCTIONS -->
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h2 style="font-size:1rem">📋 Sve zagonetke</h2>
-      <button class="btn btn-secondary btn-small" onclick="loadList()">↺ Osveži</button>
+    <h2 style="font-size:1rem;margin-bottom:14px">📋 Kako objaviti zagonetku</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Generiši zagonetku gore</strong>
+          Izaberi veličinu i datum, pa klikni "Generiši". Možeš da generišeš više puta dok ne budeš zadovoljan izgledom.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Kopiraj JSON sadržaj</strong>
+          Klikni "📋 Kopiraj" da kopiraš ceo sadržaj fajla.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Idi na GitHub repozitorijum</strong>
+          Otvori <code>github.com/langostrika/Broj-po-broj</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Kreiraj ili izmeni puzzle.json</strong>
+          Ako fajl već postoji — klikni na njega, pa na olovku (Edit). Ako ne postoji — klikni "Add file → Create new file", nazovi ga <code>puzzle.json</code>.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Nalepi i sačuvaj</strong>
+          Obriši stari sadržaj, nalepi novi JSON, pa klikni "Commit changes". Igra će automatski učitati novu zagonetku!
+        </div>
+      </div>
     </div>
-    <div id="list-wrap"><div style="color:#999;font-size:.85rem">Učitavanje…</div></div>
+
+    <div style="background:#fffbe6;border:1px solid #ffe066;border-radius:8px;padding:12px;font-size:.8rem;color:#7a6000;margin-top:4px">
+      💡 <strong>Savet:</strong> Pripremi zagonetke unapred! Možeš da generišeš zagonetku za sutra večeras i samo je postaviš pre ponoći.
+    </div>
+  </div>
+
+  <!-- EMBED -->
+  <div class="card">
+    <h2 style="font-size:1rem;margin-bottom:10px">🔗 Embed kod za 021.rs</h2>
+    <div style="background:#f5f5f0;border:1px solid #ddd;border-radius:8px;padding:12px;font-family:monospace;font-size:.75rem;white-space:pre-wrap;word-break:break-all;color:#333" id="embed-box"></div>
+    <button class="btn btn-secondary" style="margin-top:8px;padding:6px 14px;font-size:.8rem" onclick="copyEmbed()">📋 Kopiraj embed</button>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// ── CONFIG ───────────────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = 'YOUR_ADMIN_PASSWORD'; // promeni ovo!
-const SUPABASE_URL   = 'YOUR_SUPABASE_URL';
-const SUPABASE_KEY   = 'YOUR_SUPABASE_ANON_KEY';
-const TABLE          = 'zip_puzzles';
-const GAME_URL       = 'https://YOUR_GITHUB_USERNAME.github.io/zip-021/';
-// ─────────────────────────────────────────────────────────────────────────────
+const ADMIN_PASSWORD = 'YOUR_ADMIN_BROJCANOSTANJE';
+const GAME_URL = 'https://langostrika.github.io/Broj-po-broj/';
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let currentPuzzle = null;
+let currentJson = '';
 
 function doLogin() {
   const pw = document.getElementById('pw').value;
@@ -138,7 +179,7 @@ function doLogin() {
     document.getElementById('login-wrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     document.getElementById('gen-date').value = new Date().toISOString().slice(0,10);
-    loadList();
+    renderEmbedCode();
   } else {
     document.getElementById('login-err').textContent = 'Pogrešna lozinka.';
   }
@@ -147,93 +188,79 @@ function doLogin() {
 // ── GENERATOR ────────────────────────────────────────────────────────────────
 function generatePuzzle() {
   const size = +document.getElementById('gen-size').value;
+  const date = document.getElementById('gen-date').value;
   const btn = document.getElementById('gen-btn');
   btn.innerHTML = '<span class="spinner"></span>Generišem…';
   btn.disabled = true;
 
   setTimeout(() => {
-    const puzzle = generate(size);
-    currentPuzzle = puzzle;
+    const puzzle = generate(size, date);
+    if (!puzzle) { btn.innerHTML='Generiši'; btn.disabled=false; return; }
     renderPreview(puzzle, size);
-    renderEmbedCode();
+    renderJson(puzzle);
     document.getElementById('preview-wrap').style.display = 'block';
-    btn.innerHTML = 'Generiši zagonetku';
+    btn.innerHTML = 'Generiši';
     btn.disabled = false;
   }, 50);
 }
 
-function generate(size) {
-  // Hamiltonian path through grid, then pick waypoints as numbered cells
-  const total = size * size;
-  let bestPath = null;
-  let attempts = 0;
-
-  while (!bestPath && attempts < 200) {
+function generate(size, date) {
+  let bestPath = null, attempts = 0;
+  while (!bestPath && attempts < 300) {
     attempts++;
-    const path = hamiltonianPath(size);
-    if (path && path.length === total) bestPath = path;
+    const p = hamiltonianPath(size);
+    if (p && p.length === size*size) bestPath = p;
   }
-  if (!bestPath) { showMsg('Pokušaj ponovo – nije pronađen put.', true); return null; }
+  if (!bestPath) { showMsg('Nije pronađen put, pokušaj ponovo.', true); return null; }
 
-  // pick waypoints: first, last, and evenly spaced in between
+  const total = size * size;
   const numWaypoints = size <= 5 ? 4 : 5;
-  const waypoints = [];
+  const numbers = [];
   for (let i = 0; i < numWaypoints; i++) {
-    const idx = Math.round(i * (total - 1) / (numWaypoints - 1));
-    waypoints.push({ r: bestPath[idx].r, c: bestPath[idx].c, n: i + 1 });
+    const idx = Math.round(i * (total-1) / (numWaypoints-1));
+    numbers.push({ r: bestPath[idx].r, c: bestPath[idx].c, n: i+1 });
   }
 
-  return { size, solution: bestPath, numbers: waypoints };
+  return { date, grid_size: size, numbers, solution: bestPath };
 }
 
 function hamiltonianPath(size) {
-  const total = size * size;
   const visited = Array(size).fill(null).map(() => Array(size).fill(false));
   const path = [];
-
-  // random starting cell
-  const sr = Math.floor(Math.random() * size);
-  const sc = Math.floor(Math.random() * size);
+  const sr = Math.floor(Math.random()*size);
+  const sc = Math.floor(Math.random()*size);
   visited[sr][sc] = true;
-  path.push({ r: sr, c: sc });
-
+  path.push({r:sr,c:sc});
   const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
 
   function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    for (let i=a.length-1;i>0;i--) {
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
   }
 
-  function warnsdorff(r, c) {
-    // Warnsdorff's heuristic: prefer neighbor with fewest onward neighbors
-    const candidates = shuffle(dirs)
-      .map(([dr, dc]) => ({ r: r + dr, c: c + dc }))
-      .filter(({ r, c }) => r >= 0 && r < size && c >= 0 && c < size && !visited[r][c])
-      .map(nb => ({
+  let cur = {r:sr,c:sc};
+  while (path.length < size*size) {
+    const candidates = shuffle([...dirs])
+      .map(([dr,dc])=>({r:cur.r+dr,c:cur.c+dc}))
+      .filter(({r,c})=>r>=0&&r<size&&c>=0&&c<size&&!visited[r][c])
+      .map(nb=>({
         ...nb,
-        degree: dirs.filter(([dr, dc]) => {
-          const nr = nb.r + dr, nc = nb.c + dc;
-          return nr >= 0 && nr < size && nc >= 0 && nc < size && !visited[nr][nc];
+        degree: dirs.filter(([dr,dc])=>{
+          const nr=nb.r+dr,nc=nb.c+dc;
+          return nr>=0&&nr<size&&nc>=0&&nc<size&&!visited[nr][nc];
         }).length
       }))
-      .sort((a, b) => a.degree - b.degree);
-    return candidates;
-  }
-
-  let cur = { r: sr, c: sc };
-  while (path.length < total) {
-    const candidates = warnsdorff(cur.r, cur.c);
+      .sort((a,b)=>a.degree-b.degree);
     if (!candidates.length) break;
     const next = candidates[0];
-    visited[next.r][next.c] = true;
+    visited[next.r][next.c]=true;
     path.push(next);
-    cur = next;
+    cur=next;
   }
-
-  return path.length === total ? path : null;
+  return path.length===size*size ? path : null;
 }
 
 // ── PREVIEW ───────────────────────────────────────────────────────────────────
@@ -242,22 +269,32 @@ function renderPreview(puzzle, size) {
   g.style.gridTemplateColumns = `repeat(${size}, 46px)`;
   g.style.gridTemplateRows = `repeat(${size}, 46px)`;
   g.innerHTML = '';
-  const pathSet = new Set(puzzle.solution.map(({ r, c }) => r * size + c));
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
+  const pathSet = new Set(puzzle.solution.map(({r,c})=>r*size+c));
+  for (let r=0;r<size;r++) {
+    for (let c=0;c<size;c++) {
       const el = document.createElement('div');
       el.className = 'pcell';
-      const num = puzzle.numbers.find(n => n.r === r && n.c === c);
-      if (num) { el.textContent = num.n; el.classList.add('pnum'); }
-      else if (pathSet.has(r * size + c)) el.classList.add('ppath');
+      const num = puzzle.numbers.find(n=>n.r===r&&n.c===c);
+      if (num) { el.textContent=num.n; el.classList.add('pnum'); }
+      else if (pathSet.has(r*size+c)) el.classList.add('ppath');
       g.appendChild(el);
     }
   }
 }
 
+function renderJson(puzzle) {
+  const json = JSON.stringify(puzzle, null, 2);
+  currentJson = json;
+  document.getElementById('json-box').textContent = json;
+}
+
+function copyJson() {
+  navigator.clipboard.writeText(currentJson);
+  showMsg('JSON kopiran! Sada ga nalepi u puzzle.json na GitHubu.');
+}
+
 function renderEmbedCode() {
-  const w = 420, h = 580;
-  const code = `<iframe\n  src="${GAME_URL}"\n  width="${w}" height="${h}"\n  frameborder="0"\n  scrolling="no"\n  style="border-radius:12px;overflow:hidden"\n  title="Broj po broj – 021.rs"\n></iframe>`;
+  const code = `<iframe\n  src="${GAME_URL}"\n  width="420" height="580"\n  frameborder="0"\n  scrolling="no"\n  style="border-radius:12px;overflow:hidden"\n  title="Broj po broj – 021.rs"\n></iframe>`;
   document.getElementById('embed-box').textContent = code;
 }
 
@@ -266,67 +303,12 @@ function copyEmbed() {
   showMsg('Embed kod kopiran!');
 }
 
-// ── SAVE ─────────────────────────────────────────────────────────────────────
-async function savePuzzle() {
-  if (!currentPuzzle) return;
-  const date = document.getElementById('gen-date').value;
-  const { error } = await sb.from(TABLE).insert({
-    date,
-    grid_size: currentPuzzle.size,
-    numbers: currentPuzzle.numbers,
-    solution: currentPuzzle.solution,
-    active: true
-  });
-  if (error) { showMsg('Greška: ' + error.message, true); return; }
-  showMsg('Zagonetka sačuvana za ' + date + '!');
-  loadList();
-}
-
-// ── LIST ──────────────────────────────────────────────────────────────────────
-async function loadList() {
-  const { data, error } = await sb.from(TABLE).select('*').order('date', { ascending: false }).limit(30);
-  const wrap = document.getElementById('list-wrap');
-  if (error || !data?.length) { wrap.innerHTML = '<div style="color:#999;font-size:.85rem">Nema zagonetki.</div>'; return; }
-
-  let html = `<table><thead><tr><th>Datum</th><th>Mreža</th><th>Status</th><th>Akcije</th></tr></thead><tbody>`;
-  for (const p of data) {
-    const badge = p.active
-      ? '<span class="badge badge-green">Aktivna</span>'
-      : '<span class="badge badge-gray">Neaktivna</span>';
-    html += `<tr>
-      <td>${p.date}</td>
-      <td>${p.grid_size}×${p.grid_size}</td>
-      <td>${badge}</td>
-      <td>
-        <button class="btn btn-danger btn-small" onclick="deletePuzzle('${p.id}')">Obriši</button>
-        ${p.active
-          ? `<button class="btn btn-secondary btn-small" style="margin-left:4px" onclick="toggleActive('${p.id}', false)">Deaktiviraj</button>`
-          : `<button class="btn btn-primary btn-small" style="margin-left:4px" onclick="toggleActive('${p.id}', true)">Aktiviraj</button>`}
-      </td>
-    </tr>`;
-  }
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
-
-async function deletePuzzle(id) {
-  if (!confirm('Obrisati ovu zagonetku?')) return;
-  await sb.from(TABLE).delete().eq('id', id);
-  loadList();
-}
-
-async function toggleActive(id, active) {
-  await sb.from(TABLE).update({ active }).eq('id', id);
-  loadList();
-}
-
-// ── MSG ───────────────────────────────────────────────────────────────────────
-function showMsg(txt, isErr = false) {
+function showMsg(txt, isErr=false) {
   const el = document.getElementById('msg');
   el.textContent = txt;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.className = 'msg ' + (isErr?'msg-err':'msg-ok');
   el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 3500);
+  setTimeout(()=>el.style.display='none', 4000);
 }
 </script>
 </body>
