@@ -7,38 +7,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
   :root{
-    --bg:#111111;
-    --bg2:#1a1a1a;
-    --bg3:#222222;
-    --cell:#2a2a2a;
-    --cell-border:#333;
-    --accent:#c8f135;
-    --accent2:#a8d420;
-    --orange:#e8642a;
-    --text:#ffffff;
+    --bg:#f5f5f0;
+    --bg2:#ffffff;
+    --bg3:#e8e8e2;
+    --cell:#ffffff;
+    --cell-border:#ddd;
+    --accent:#1a1a1a;
+    --accent2:#333;
+    --highlight:#c8f135;
+    --text:#1a1a1a;
     --text-muted:#888;
-    --path:#3a5a10;
-    --path-line:#c8f135;
-    --active:#c8f135;
-    --complete:#4a8a20;
-    --num-bg:#c8f135;
-    --num-text:#111;
+    --path-bg:#e8f5cc;
+    --path-line:#5a9a10;
+    --complete-bg:#d4f0a0;
+    --num-bg:#1a1a1a;
+    --num-text:#ffffff;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;min-height:100vh;padding:0}
   .wrap{width:100%;max-width:500px;display:flex;flex-direction:column;min-height:100vh}
 
   /* HEADER */
-  header{background:var(--bg2);border-bottom:2px solid var(--bg3);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-  .logo-wrap{display:flex;align-items:center;gap:10px}
-  .game-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:2px;text-transform:uppercase;color:var(--text)}
-  .game-title span{color:var(--accent)}
-  #date-label{font-size:.65rem;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;text-align:right;line-height:1.4}
+  header{background:var(--accent);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+  .game-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:2px;text-transform:uppercase;color:#fff}
+  .game-title span{color:var(--highlight)}
+  #date-label{font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase;text-align:right;line-height:1.4}
 
   /* STATS BAR */
-  .stats-bar{background:var(--bg2);border-bottom:1px solid var(--bg3);padding:8px 16px;display:flex;justify-content:space-around}
+  .stats-bar{background:var(--bg2);border-bottom:2px solid var(--bg3);padding:10px 16px;display:flex;justify-content:space-around}
   .stat{text-align:center}
-  .stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.4rem;color:var(--accent);line-height:1}
+  .stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.5rem;color:var(--accent);line-height:1}
   .stat-lbl{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
   /* GAME AREA */
@@ -48,51 +46,50 @@
   #grid-wrap{display:flex;justify-content:center;margin:8px 0}
   #grid{display:grid;gap:3px;background:var(--bg3);border:3px solid var(--bg3);border-radius:8px;overflow:hidden;touch-action:none;user-select:none}
   .cell{background:var(--cell);display:flex;align-items:center;justify-content:center;position:relative;cursor:crosshair;transition:background .08s;border:1px solid var(--cell-border)}
-  .cell.path{background:var(--path)}
-  .cell.active{background:var(--path);box-shadow:inset 0 0 0 2px var(--accent)}
-  .cell.complete{background:#2a5a10}
-  .cell.numbered{background:var(--cell)}
+  .cell.path{background:var(--path-bg)}
+  .cell.active{background:var(--path-bg);box-shadow:inset 0 0 0 2px var(--path-line)}
+  .cell.complete{background:var(--complete-bg)}
   .cell svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 
   /* number badges */
-  .num-badge{width:28px;height:28px;background:var(--accent);color:var(--num-text);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:.95rem;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;line-height:1}
-  .cell.complete .num-badge{background:var(--accent2)}
+  .num-badge{width:30px;height:30px;background:var(--num-bg);color:var(--num-text);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+  .cell.complete .num-badge{background:#3a7a10}
 
   /* BUTTONS */
   .btn-row{display:flex;gap:10px;margin:12px 0;width:100%}
   .btn{flex:1;padding:12px;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
   .btn:active{transform:scale(.97)}
-  #btn-reset{background:var(--bg3);color:var(--text);border:1px solid #444}
-  #btn-reset:hover{border-color:#666}
-  #btn-hint{background:var(--accent);color:var(--num-text)}
+  #btn-reset{background:var(--bg3);color:var(--text);border:1px solid #ccc}
+  #btn-reset:hover{background:#ddd}
+  #btn-hint{background:var(--accent);color:#fff}
   #btn-hint:hover{background:var(--accent2)}
 
   /* STATUS */
   #status{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:.9rem;letter-spacing:1px;text-transform:uppercase}
 
   /* PLAYED MSG */
-  #played-msg{display:none;background:var(--bg2);border:1px solid var(--bg3);border-radius:8px;padding:16px;text-align:center;margin:8px 0;width:100%}
+  #played-msg{display:none;background:var(--bg2);border:2px solid var(--bg3);border-radius:8px;padding:16px;text-align:center;margin:8px 0;width:100%}
   #played-msg h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
   #played-msg p{font-size:.8rem;color:var(--text-muted)}
 
   /* OVERLAY */
-  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;justify-content:center;align-items:center}
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;justify-content:center;align-items:center}
   #overlay.show{display:flex}
-  #modal{background:var(--bg2);border:2px solid var(--accent);border-radius:16px;padding:32px 24px;text-align:center;max-width:320px;width:90%}
+  #modal{background:var(--bg2);border-radius:16px;padding:32px 24px;text-align:center;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
   #modal .big{font-size:3rem;margin-bottom:8px}
   #modal h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:8px}
-  #modal p{color:var(--text-muted);font-size:.85rem;margin-bottom:20px;letter-spacing:.5px}
-  #share-btn{background:var(--accent);color:var(--num-text);border:none;border-radius:6px;padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%}
-  #play-again{background:var(--bg3);color:var(--text);border:1px solid #444;border-radius:6px;padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;margin-top:8px}
+  #modal .result-block{background:var(--bg);border-radius:10px;padding:16px;margin-bottom:20px}
+  #modal .result-block p{color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+  #modal .result-block p:last-child{margin-bottom:0;color:var(--text-muted);font-size:.9rem;font-weight:400;font-family:'Barlow',sans-serif;letter-spacing:0}
+  #close-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%}
+  #close-btn:hover{background:var(--accent2)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="logo-wrap">
-      <div class="game-title"><span>021</span> – Broj po broj</div>
-    </div>
+    <div class="game-title"><span>021</span> – Broj po broj</div>
     <div id="date-label">Učitavanje…</div>
   </header>
 
@@ -104,7 +101,7 @@
 
   <div class="game-area">
     <div id="status">Učitavanje zagonetke…</div>
-    <div id="game" style="display:none;width:100%;display:none;flex-direction:column;align-items:center">
+    <div id="game" style="display:none;flex-direction:column;align-items:center;width:100%">
       <div id="grid-wrap"><div id="grid"></div></div>
       <div class="btn-row">
         <button class="btn" id="btn-reset">↺ Resetuj</button>
@@ -123,9 +120,11 @@
   <div id="modal">
     <div class="big">🏆</div>
     <h2>Bravo!</h2>
-    <p id="result-text"></p>
-    <button id="share-btn">Podeli rezultat</button>
-    <button id="play-again">Igraj ponovo</button>
+    <div class="result-block">
+      <p id="result-time"></p>
+      <p id="result-moves"></p>
+    </div>
+    <button id="close-btn">Zatvori</button>
   </div>
 </div>
 
@@ -136,7 +135,9 @@ const STORAGE_KEY = 'broj_po_broj_played';
 let puzzle = null, size = 5;
 let path = [], dragging = false;
 let moves = 0, startTime = null, timerInterval = null, hintsUsed = 0;
+let gameFinished = false;
 
+// ── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
   try {
     const res = await fetch(PUZZLE_URL + '?t=' + Date.now());
@@ -147,8 +148,7 @@ async function init() {
     return;
   }
 
-  const today = puzzle.date;
-  document.getElementById('date-label').textContent = formatDate(today);
+  document.getElementById('date-label').textContent = formatDate(puzzle.date);
   document.getElementById('status').style.display = 'none';
   const game = document.getElementById('game');
   game.style.display = 'flex';
@@ -157,14 +157,18 @@ async function init() {
   buildGrid();
 
   const played = getPlayed();
-  if (played && played.date === today) {
+  if (played && played.date === puzzle.date) {
     renderSolution(played.solution);
     document.getElementById('played-msg').style.display = 'block';
+    document.getElementById('timer-val').textContent = played.time || '–';
+    document.getElementById('moves-val').textContent = played.moves || '–';
     return;
   }
+
   startTimer();
 }
 
+// ── UTILS ─────────────────────────────────────────────────────────────────────
 function formatDate(s) {
   const d = new Date(s + 'T12:00:00');
   return d.toLocaleDateString('sr-Latn-RS', { day:'numeric', month:'long', year:'numeric' });
@@ -172,6 +176,7 @@ function formatDate(s) {
 function getPlayed() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; } }
 function savePlayed(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
+// ── GRID ──────────────────────────────────────────────────────────────────────
 function buildGrid() {
   const g = document.getElementById('grid');
   const vw = Math.min(window.innerWidth - 32, 468);
@@ -205,154 +210,196 @@ function adjacent(a, b) { return Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1; }
 function inPath(r, c) { return path.some(p=>p.r===r&&p.c===c); }
 function pathIndexOf(r, c) { return path.findIndex(p=>p.r===r&&p.c===c); }
 
+// Vraća koji je trenutni "nivo" — koliko numerisanih ćelija je u putu
 function getCurrentSeqNum() {
-  let maxN=0;
+  let maxN = 0;
   for (const p of path) {
-    const n=puzzle.numbers.find(n=>n.r===p.r&&n.c===p.c);
-    if (n&&n.n>maxN) maxN=n.n;
+    const n = puzzle.numbers.find(n=>n.r===p.r&&n.c===p.c);
+    if (n && n.n > maxN) maxN = n.n;
   }
   return maxN;
 }
 
+// ── VALIDACIJA POTEZA ─────────────────────────────────────────────────────────
+// Igrač može da ide bilo gde osim:
+// 1. Van mreže
+// 2. Na već posećenu ćeliju
+// 3. Na numerisanu ćeliju koja nije sledeća u nizu
 function isValidNext(r, c) {
-  if (r<0||r>=size||c<0||c>=size) return false;
-  if (inPath(r,c)) return false;
-  const last=path[path.length-1];
-  if (!adjacent(last,{r,c})) return false;
-  const num=puzzle.numbers.find(n=>n.r===r&&n.c===c);
-  if (num && num.n!==getCurrentSeqNum()+1) return false;
+  if (r < 0 || r >= size || c < 0 || c >= size) return false;
+  if (inPath(r, c)) return false;
+  const last = path[path.length-1];
+  if (!adjacent(last, {r,c})) return false;
+
+  const num = puzzle.numbers.find(n=>n.r===r&&n.c===c);
+  if (num) {
+    // numerisana ćelija — mora biti sledeća u nizu
+    const currentSeq = getCurrentSeqNum();
+    if (num.n !== currentSeq + 1) return false;
+  }
+  // prazna ćelija — slobodno
   return true;
 }
 
+// ── PATH LOGIKA ───────────────────────────────────────────────────────────────
 function startPath(r, c) {
-  const num=puzzle.numbers.find(n=>n.r===r&&n.c===c);
-  if (!num||num.n!==1) return;
-  path=[{r,c}]; moves++;
-  document.getElementById('moves-val').textContent=moves;
+  if (gameFinished) return;
+  const num = puzzle.numbers.find(n=>n.r===r&&n.c===c);
+  if (!num || num.n !== 1) return;
+  path = [{r,c}];
+  moves++;
+  document.getElementById('moves-val').textContent = moves;
   renderPath();
 }
 
 function extendPath(r, c) {
-  if (!path.length) return;
-  const idx=pathIndexOf(r,c);
-  if (idx!==-1){path=path.slice(0,idx+1);renderPath();return;}
-  if (!isValidNext(r,c)) return;
-  path.push({r,c}); renderPath(); checkWin();
+  if (gameFinished || !path.length) return;
+
+  // Backtrack: ako klikneš/prevučeš na već posećenu ćeliju, vrati se tamo
+  const idx = pathIndexOf(r, c);
+  if (idx !== -1) {
+    path = path.slice(0, idx+1);
+    renderPath();
+    return;
+  }
+
+  if (!isValidNext(r, c)) return;
+  path.push({r,c});
+  renderPath();
+  checkWin();
 }
 
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderPath() {
-  document.querySelectorAll('.cell').forEach(el=>{
+  document.querySelectorAll('.cell').forEach(el => {
     el.classList.remove('path','active','complete');
     el.querySelectorAll('svg').forEach(s=>s.remove());
   });
-  for (let i=0;i<path.length;i++) {
-    const {r,c}=path[i];
-    const el=getCell(r,c); if(!el) continue;
-    if (i===path.length-1) el.classList.add('active');
+  for (let i = 0; i < path.length; i++) {
+    const {r,c} = path[i];
+    const el = getCell(r,c); if (!el) continue;
+    if (i === path.length-1) el.classList.add('active');
     else el.classList.add('path');
-    drawConnectors(el,r,c,i);
+    drawConnectors(el, r, c, i);
   }
 }
 
 function drawConnectors(el, r, c, i) {
-  const prev=i>0?path[i-1]:null;
-  const next=i<path.length-1?path[i+1]:null;
-  if (!prev&&!next) return;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  const prev = i > 0 ? path[i-1] : null;
+  const next = i < path.length-1 ? path[i+1] : null;
+  if (!prev && !next) return;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('viewBox','0 0 10 10');
-  const line=(x1,y1,x2,y2)=>{
-    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
-    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
-    l.setAttribute('stroke','#c8f135');l.setAttribute('stroke-width','3');
+  const line = (x1,y1,x2,y2) => {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+    l.setAttribute('stroke','#5a9a10'); l.setAttribute('stroke-width','3');
     l.setAttribute('stroke-linecap','round');
     svg.appendChild(l);
   };
-  const cx=5,cy=5;
-  if (prev){const dr=r-prev.r,dc=c-prev.c;line(cx,cy,cx-dc*5,cy-dr*5);}
-  if (next){const dr=next.r-r,dc=next.c-c;line(cx,cy,cx+dc*5,cy+dr*5);}
+  const cx=5, cy=5;
+  if (prev) { const dr=r-prev.r, dc=c-prev.c; line(cx,cy,cx-dc*5,cy-dr*5); }
+  if (next) { const dr=next.r-r, dc=next.c-c; line(cx,cy,cx+dc*5,cy+dr*5); }
   el.appendChild(svg);
 }
 
+// ── WIN ───────────────────────────────────────────────────────────────────────
 function checkWin() {
-  if (path.length!==size*size) return;
-  const last=path[path.length-1];
-  const maxN=Math.max(...puzzle.numbers.map(n=>n.n));
-  const lastNum=puzzle.numbers.find(n=>n.r===last.r&&n.c===last.c);
-  if (!lastNum||lastNum.n!==maxN) return;
-  path.forEach(({r,c})=>getCell(r,c)?.classList.add('complete'));
+  if (path.length !== size*size) return;
+  const last = path[path.length-1];
+  const maxN = Math.max(...puzzle.numbers.map(n=>n.n));
+  const lastNum = puzzle.numbers.find(n=>n.r===last.r&&n.c===last.c);
+  if (!lastNum || lastNum.n !== maxN) return;
+
+  // Pobeda!
+  gameFinished = true;
   stopTimer();
-  const elapsed=timerVal();
-  savePlayed({date:puzzle.date,solution:path,moves,time:elapsed,hints:hintsUsed});
-  setTimeout(()=>showWin(elapsed),400);
+  path.forEach(({r,c}) => getCell(r,c)?.classList.add('complete'));
+  const elapsed = timerVal();
+  savePlayed({ date: puzzle.date, solution: path, moves, time: elapsed, hints: hintsUsed });
+  setTimeout(() => showWin(elapsed), 500);
 }
 
+// ── TIMER ─────────────────────────────────────────────────────────────────────
 function startTimer() {
-  startTime=Date.now();
-  timerInterval=setInterval(()=>{document.getElementById('timer-val').textContent=timerVal();},1000);
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    document.getElementById('timer-val').textContent = timerVal();
+  }, 1000);
 }
-function stopTimer(){clearInterval(timerInterval);}
-function timerVal(){
-  const s=Math.floor((Date.now()-startTime)/1000);
+function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+function timerVal() {
+  if (!startTime) return '0:00';
+  const s = Math.floor((Date.now()-startTime)/1000);
   return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 }
 
+// ── EVENTS ────────────────────────────────────────────────────────────────────
 function attachEvents() {
-  const grid=document.getElementById('grid');
-  grid.addEventListener('mousedown',e=>{
-    const cell=e.target.closest('.cell');if(!cell)return;
-    dragging=true;path=[];startPath(+cell.dataset.r,+cell.dataset.c);
+  const grid = document.getElementById('grid');
+
+  grid.addEventListener('mousedown', e => {
+    if (gameFinished) return;
+    const cell = e.target.closest('.cell'); if (!cell) return;
+    dragging = true; path = [];
+    startPath(+cell.dataset.r, +cell.dataset.c);
   });
-  grid.addEventListener('mousemove',e=>{
-    if(!dragging)return;
-    const cell=e.target.closest('.cell');if(!cell)return;
-    extendPath(+cell.dataset.r,+cell.dataset.c);
+  grid.addEventListener('mousemove', e => {
+    if (!dragging || gameFinished) return;
+    const cell = e.target.closest('.cell'); if (!cell) return;
+    extendPath(+cell.dataset.r, +cell.dataset.c);
   });
-  document.addEventListener('mouseup',()=>{dragging=false;});
-  grid.addEventListener('touchstart',e=>{
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  grid.addEventListener('touchstart', e => {
+    if (gameFinished) return;
     e.preventDefault();
-    const t=e.touches[0];
-    const cell=document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell');if(!cell)return;
-    dragging=true;path=[];startPath(+cell.dataset.r,+cell.dataset.c);
-  },{passive:false});
-  grid.addEventListener('touchmove',e=>{
-    e.preventDefault();if(!dragging)return;
-    const t=e.touches[0];
-    const cell=document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell');if(!cell)return;
-    extendPath(+cell.dataset.r,+cell.dataset.c);
-  },{passive:false});
-  grid.addEventListener('touchend',()=>{dragging=false;});
-  document.getElementById('btn-reset').addEventListener('click',()=>{path=[];renderPath();});
-  document.getElementById('btn-hint').addEventListener('click',()=>{
+    const t = e.touches[0];
+    const cell = document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell'); if (!cell) return;
+    dragging = true; path = [];
+    startPath(+cell.dataset.r, +cell.dataset.c);
+  }, {passive:false});
+  grid.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!dragging || gameFinished) return;
+    const t = e.touches[0];
+    const cell = document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell'); if (!cell) return;
+    extendPath(+cell.dataset.r, +cell.dataset.c);
+  }, {passive:false});
+  grid.addEventListener('touchend', () => { dragging = false; });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (gameFinished) return;
+    path = []; renderPath();
+  });
+
+  document.getElementById('btn-hint').addEventListener('click', () => {
+    if (gameFinished) return;
     hintsUsed++;
-    const sol=puzzle.solution;
-    const step=Math.min(path.length,sol.length-1);
-    const hint=sol[step];
-    const el=getCell(hint.r,hint.c);
-    if(el){el.style.outline='3px solid #e8642a';setTimeout(()=>el.style.outline='',1200);}
+    const sol = puzzle.solution;
+    const step = Math.min(path.length, sol.length-1);
+    const hint = sol[step];
+    const el = getCell(hint.r, hint.c);
+    if (el) { el.style.outline='3px solid #e8642a'; setTimeout(()=>el.style.outline='',1200); }
   });
 }
 
+// ── WIN MODAL ─────────────────────────────────────────────────────────────────
 function showWin(elapsed) {
   document.getElementById('overlay').classList.add('show');
-  document.getElementById('result-text').textContent=
-    `Vreme: ${elapsed} · Potezi: ${moves}${hintsUsed?' · Pomoći: '+hintsUsed:''}`;
-  document.getElementById('share-btn').onclick=()=>{
-    const txt=`Broj po broj 021.rs\n${formatDate(puzzle.date)}\n⏱ ${elapsed} | ${moves} potez${moves===1?'':'a'}${hintsUsed?' | 💡 '+hintsUsed:''}\nhttps://021.rs`;
-    if(navigator.share)navigator.share({text:txt});
-    else{navigator.clipboard.writeText(txt);alert('Kopirano!');}
-  };
-  document.getElementById('play-again').onclick=()=>{
+  document.getElementById('result-time').textContent = '⏱ Vreme: ' + elapsed;
+  document.getElementById('result-moves').textContent =
+    '🔢 Potezi: ' + moves + (hintsUsed ? ' · 💡 Pomoći: ' + hintsUsed : '');
+
+  document.getElementById('close-btn').onclick = () => {
     document.getElementById('overlay').classList.remove('show');
-    path=[];moves=0;hintsUsed=0;
-    document.getElementById('moves-val').textContent=0;
-    renderPath();startTimer();
   };
 }
 
 function renderSolution(sol) {
-  path=sol;renderPath();
-  path.forEach(({r,c})=>getCell(r,c)?.classList.add('complete'));
+  path = sol; renderPath();
+  path.forEach(({r,c}) => getCell(r,c)?.classList.add('complete'));
 }
 
 init();
