@@ -55,14 +55,7 @@
   .num-badge{width:30px;height:30px;background:var(--num-bg);color:var(--num-text);font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1rem;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
   .cell.complete .num-badge{background:#3a7a10}
 
-  /* BUTTONS */
-  .btn-row{display:flex;gap:10px;margin:12px 0;width:100%}
-  .btn{flex:1;padding:12px;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
-  .btn:active{transform:scale(.97)}
-  #btn-reset{background:var(--bg3);color:var(--text);border:1px solid #ccc}
-  #btn-reset:hover{background:#ddd}
-  #btn-hint{background:var(--accent);color:#fff}
-  #btn-hint:hover{background:var(--accent2)}
+
 
   /* STATUS */
   #status{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:.9rem;letter-spacing:1px;text-transform:uppercase}
@@ -103,10 +96,7 @@
     <div id="status">Učitavanje zagonetke…</div>
     <div id="game" style="display:none;flex-direction:column;align-items:center;width:100%">
       <div id="grid-wrap"><div id="grid"></div></div>
-      <div class="btn-row">
-        <button class="btn" id="btn-reset">↺ Resetuj</button>
-        <button class="btn" id="btn-hint">💡 Pomoć</button>
-      </div>
+
       <div id="played-msg">
         <h3>Već si rešio/la zagonetku!</h3>
         <p>Vrati se sutra za novu mozgalicu.</p>
@@ -374,24 +364,6 @@ function attachEvents() {
   }, {passive:false});
   grid.addEventListener('touchend', () => { dragging = false; });
 
-  document.getElementById('btn-reset').addEventListener('click', () => {
-    if (gameFinished) return;
-    path = []; renderPath();
-  });
-
-  document.getElementById('btn-hint').addEventListener('click', () => {
-    if (gameFinished) return;
-    dragging = false;
-    hintsUsed++;
-    const sol = puzzle.solution;
-    const step = Math.min(path.length, sol.length-1);
-    const hint = sol[step];
-    const el = getCell(hint.r, hint.c);
-    if (el) {
-      el.style.outline='3px solid #e8642a';
-      setTimeout(() => { el.style.outline=''; }, 1200);
-    }
-  });
 }
 
 // ── WIN MODAL ─────────────────────────────────────────────────────────────────
