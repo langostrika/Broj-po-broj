@@ -123,8 +123,9 @@
     <div class="steps">
       <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Generiši zagonetku gore</strong>Izaberi veličinu, datum i broj waypointa, pa klikni "Generiši".</div></div>
       <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Kopiraj JSON sadržaj</strong>Klikni "📋 Kopiraj".</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Idi na GitHub</strong>Otvori <code>github.com/langostrika/Broj-po-broj</code></div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Izmeni puzzle.json</strong>Klikni na fajl → olovka (Edit) → <code>Ctrl+A</code> → <code>Ctrl+V</code> → Commit changes.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Idi na GitHub u folder puzzles/</strong>Otvori <code>github.com/langostrika/Broj-po-broj</code> → klikni na folder <code>puzzles</code></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Kreiraj novi fajl</strong>Klikni "Add file → Create new file" → nazovi ga <code>2026-04-01.json</code> (datum zagonetke) → nalepi sadržaj → Commit changes.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Kopiraj embed kod</strong>Embed kod ispod već sadrži tačan datum. Kopiraj ga i ubaci u objavu na 021.rs.</div></div>
     </div>
     <div style="background:#fffbe6;border:1px solid #ffe066;border-radius:8px;padding:12px;font-size:.8rem;color:#7a6000;margin-top:4px">
       💡 <strong>Savet:</strong> Možeš da generišeš zagonetku za sutra večeras unapred — samo unesi sutrašnji datum.
@@ -139,10 +140,11 @@
 </div>
 
 <script>
-const ADMIN_PASSWORD = 'BROJCANOSTANJE';
+const ADMIN_PASSWORD = 'YOUR_ADMIN_PASSWORD';
 const GAME_URL = 'https://langostrika.github.io/Broj-po-broj/';
 
 let currentJson = '';
+let currentDate = '';
 let selectedWaypoints = 5;
 
 function doLogin() {
@@ -152,7 +154,6 @@ function doLogin() {
     document.getElementById('app').style.display = 'block';
     document.getElementById('gen-date').value = new Date().toISOString().slice(0,10);
     buildChips();
-    renderEmbedCode();
   } else {
     document.getElementById('login-err').textContent = 'Pogrešna lozinka.';
   }
@@ -271,16 +272,19 @@ function renderPreview(puzzle, size) {
 function renderJson(puzzle) {
   const json = JSON.stringify(puzzle, null, 2);
   currentJson = json;
+  currentDate = puzzle.date;
   document.getElementById('json-box').textContent = json;
+  renderEmbedCode(puzzle.date);
 }
 
 function copyJson() {
   navigator.clipboard.writeText(currentJson);
-  showMsg('JSON kopiran! Nalepi ga u puzzle.json na GitHubu.');
+  showMsg('JSON kopiran! Sačuvaj ga kao puzzles/' + currentDate + '.json na GitHubu.');
 }
 
-function renderEmbedCode() {
-  const code = `<iframe\n  src="${GAME_URL}"\n  width="420" height="580"\n  frameborder="0"\n  scrolling="no"\n  style="border-radius:12px;overflow:hidden"\n  title="Broj po broj – 021.rs"\n></iframe>`;
+function renderEmbedCode(date) {
+  const d = date || 'DATUM';
+  const code = `<iframe\n  src="${GAME_URL}?date=${d}"\n  width="420" height="580"\n  frameborder="0"\n  scrolling="no"\n  style="border-radius:12px;overflow:hidden"\n  title="Broj po broj – 021.rs"\n></iframe>`;
   document.getElementById('embed-box').textContent = code;
 }
 
