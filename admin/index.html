@@ -14,8 +14,8 @@
   #login-wrap h2{font-size:1.1rem;margin-bottom:16px;text-align:center}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:.8rem;color:#555;margin-bottom:4px}
-  .field input,select{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:7px;font-size:.9rem}
-  .field input:focus,select:focus{outline:none;border-color:#5aabff}
+  .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:7px;font-size:.9rem}
+  .field input:focus,.field select:focus{outline:none;border-color:#5aabff}
   .primary-btn{width:100%;padding:11px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer}
   .primary-btn:hover{background:#333}
   #login-err{color:#c00;font-size:.8rem;margin-top:8px;text-align:center}
@@ -35,15 +35,13 @@
   #preview-wrap{display:none;margin-top:16px}
   #preview-grid{display:grid;gap:2px;background:#ccc;border:2px solid #999;border-radius:6px;overflow:hidden;margin:12px 0;width:fit-content}
   .pcell{width:46px;height:46px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#333}
-  .pcell.pnum{background:#ffe9a0}
-  .pcell.ppath{background:#d4eaff}
+  .pcell.pnum{background:#1a1a1a;color:#fff;border-radius:4px}
+  .pcell.ppath{background:#e8f5cc}
 
-  /* JSON output */
   #json-wrap{margin-top:16px}
   #json-box{background:#1a1a2e;color:#a8ff78;border-radius:8px;padding:14px;font-family:monospace;font-size:.72rem;white-space:pre;overflow-x:auto;max-height:260px;overflow-y:auto;line-height:1.5}
 
-  /* Instructions */
-  .steps{counter-reset:step}
+  .steps{margin:0}
   .step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
   .step-num{background:#1a1a1a;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;margin-top:2px}
   .step-text{font-size:.85rem;color:#333;line-height:1.5}
@@ -59,6 +57,10 @@
 
   .copy-btn{background:#333;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;float:right;margin-top:-2px}
   .copy-btn:hover{background:#555}
+
+  .num-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .num-chip{padding:6px 12px;border:2px solid #ddd;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;color:#333;transition:all .15s}
+  .num-chip.selected{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
 </style>
 </head>
 <body>
@@ -77,7 +79,6 @@
   <p class="sub">021.rs mozgalica – upravljanje zagonetkama</p>
   <div id="msg"></div>
 
-  <!-- GENERATE -->
   <div class="card">
     <h2 style="font-size:1rem;margin-bottom:12px">➕ Generiši novu zagonetku</h2>
     <div class="row">
@@ -90,18 +91,22 @@
       <div class="field"><label>Datum zagonetke</label>
         <input type="date" id="gen-date"/>
       </div>
-      <div class="field" style="flex:0">
-        <button class="btn btn-primary" id="gen-btn" onclick="generatePuzzle()">Generiši</button>
-      </div>
+    </div>
+    <div class="field">
+      <label>Broj waypointa (koliko brojeva da poveže igrač)</label>
+      <div class="num-options" id="num-chips"></div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn btn-primary" id="gen-btn" onclick="generatePuzzle()">Generiši</button>
     </div>
 
     <div id="preview-wrap">
-      <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <strong style="font-size:.9rem">Pregled</strong>
         <button class="btn btn-secondary" style="padding:5px 12px;font-size:.75rem" onclick="generatePuzzle()">↺ Nova</button>
       </div>
       <div id="preview-grid"></div>
-      <div style="font-size:.72rem;color:#777;margin-bottom:12px">Plava = put rešenja · Žuta = brojevi</div>
+      <div style="font-size:.72rem;color:#777;margin-bottom:12px">Zelena = put rešenja · Crna = brojevi</div>
 
       <div id="json-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -113,53 +118,19 @@
     </div>
   </div>
 
-  <!-- INSTRUCTIONS -->
   <div class="card">
     <h2 style="font-size:1rem;margin-bottom:14px">📋 Kako objaviti zagonetku</h2>
     <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          <strong>Generiši zagonetku gore</strong>
-          Izaberi veličinu i datum, pa klikni "Generiši". Možeš da generišeš više puta dok ne budeš zadovoljan izgledom.
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">
-          <strong>Kopiraj JSON sadržaj</strong>
-          Klikni "📋 Kopiraj" da kopiraš ceo sadržaj fajla.
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">
-          <strong>Idi na GitHub repozitorijum</strong>
-          Otvori <code>github.com/langostrika/Broj-po-broj</code>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text">
-          <strong>Kreiraj ili izmeni puzzle.json</strong>
-          Ako fajl već postoji — klikni na njega, pa na olovku (Edit). Ako ne postoji — klikni "Add file → Create new file", nazovi ga <code>puzzle.json</code>.
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-text">
-          <strong>Nalepi i sačuvaj</strong>
-          Obriši stari sadržaj, nalepi novi JSON, pa klikni "Commit changes". Igra će automatski učitati novu zagonetku!
-        </div>
-      </div>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Generiši zagonetku gore</strong>Izaberi veličinu, datum i broj waypointa, pa klikni "Generiši".</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Kopiraj JSON sadržaj</strong>Klikni "📋 Kopiraj".</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Idi na GitHub</strong>Otvori <code>github.com/langostrika/Broj-po-broj</code></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Izmeni puzzle.json</strong>Klikni na fajl → olovka (Edit) → <code>Ctrl+A</code> → <code>Ctrl+V</code> → Commit changes.</div></div>
     </div>
-
     <div style="background:#fffbe6;border:1px solid #ffe066;border-radius:8px;padding:12px;font-size:.8rem;color:#7a6000;margin-top:4px">
-      💡 <strong>Savet:</strong> Pripremi zagonetke unapred! Možeš da generišeš zagonetku za sutra večeras i samo je postaviš pre ponoći.
+      💡 <strong>Savet:</strong> Možeš da generišeš zagonetku za sutra večeras unapred — samo unesi sutrašnji datum.
     </div>
   </div>
 
-  <!-- EMBED -->
   <div class="card">
     <h2 style="font-size:1rem;margin-bottom:10px">🔗 Embed kod za 021.rs</h2>
     <div style="background:#f5f5f0;border:1px solid #ddd;border-radius:8px;padding:12px;font-family:monospace;font-size:.75rem;white-space:pre-wrap;word-break:break-all;color:#333" id="embed-box"></div>
@@ -172,6 +143,7 @@ const ADMIN_PASSWORD = 'BROJCANOSTANJE';
 const GAME_URL = 'https://langostrika.github.io/Broj-po-broj/';
 
 let currentJson = '';
+let selectedWaypoints = 5;
 
 function doLogin() {
   const pw = document.getElementById('pw').value;
@@ -179,13 +151,29 @@ function doLogin() {
     document.getElementById('login-wrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     document.getElementById('gen-date').value = new Date().toISOString().slice(0,10);
+    buildChips();
     renderEmbedCode();
   } else {
     document.getElementById('login-err').textContent = 'Pogrešna lozinka.';
   }
 }
 
-// ── GENERATOR ────────────────────────────────────────────────────────────────
+function buildChips() {
+  const wrap = document.getElementById('num-chips');
+  wrap.innerHTML = '';
+  for (let i = 4; i <= 9; i++) {
+    const chip = document.createElement('div');
+    chip.className = 'num-chip' + (i === selectedWaypoints ? ' selected' : '');
+    chip.textContent = i + ' broja';
+    chip.onclick = () => {
+      selectedWaypoints = i;
+      document.querySelectorAll('.num-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+    };
+    wrap.appendChild(chip);
+  }
+}
+
 function generatePuzzle() {
   const size = +document.getElementById('gen-size').value;
   const date = document.getElementById('gen-date').value;
@@ -194,7 +182,7 @@ function generatePuzzle() {
   btn.disabled = true;
 
   setTimeout(() => {
-    const puzzle = generate(size, date);
+    const puzzle = generate(size, date, selectedWaypoints);
     if (!puzzle) { btn.innerHTML='Generiši'; btn.disabled=false; return; }
     renderPreview(puzzle, size);
     renderJson(puzzle);
@@ -204,7 +192,7 @@ function generatePuzzle() {
   }, 50);
 }
 
-function generate(size, date) {
+function generate(size, date, numWaypoints) {
   let bestPath = null, attempts = 0;
   while (!bestPath && attempts < 300) {
     attempts++;
@@ -214,7 +202,6 @@ function generate(size, date) {
   if (!bestPath) { showMsg('Nije pronađen put, pokušaj ponovo.', true); return null; }
 
   const total = size * size;
-  const numWaypoints = size <= 5 ? 4 : 5;
   const numbers = [];
   for (let i = 0; i < numWaypoints; i++) {
     const idx = Math.round(i * (total-1) / (numWaypoints-1));
@@ -241,29 +228,28 @@ function hamiltonianPath(size) {
     return a;
   }
 
-  let cur = {r:sr,c:sc};
+  let cur = {r:sr, c:sc};
   while (path.length < size*size) {
     const candidates = shuffle([...dirs])
-      .map(([dr,dc])=>({r:cur.r+dr,c:cur.c+dc}))
+      .map(([dr,dc])=>({r:cur.r+dr, c:cur.c+dc}))
       .filter(({r,c})=>r>=0&&r<size&&c>=0&&c<size&&!visited[r][c])
       .map(nb=>({
         ...nb,
         degree: dirs.filter(([dr,dc])=>{
-          const nr=nb.r+dr,nc=nb.c+dc;
+          const nr=nb.r+dr, nc=nb.c+dc;
           return nr>=0&&nr<size&&nc>=0&&nc<size&&!visited[nr][nc];
         }).length
       }))
       .sort((a,b)=>a.degree-b.degree);
     if (!candidates.length) break;
     const next = candidates[0];
-    visited[next.r][next.c]=true;
+    visited[next.r][next.c] = true;
     path.push(next);
-    cur=next;
+    cur = next;
   }
   return path.length===size*size ? path : null;
 }
 
-// ── PREVIEW ───────────────────────────────────────────────────────────────────
 function renderPreview(puzzle, size) {
   const g = document.getElementById('preview-grid');
   g.style.gridTemplateColumns = `repeat(${size}, 46px)`;
@@ -290,7 +276,7 @@ function renderJson(puzzle) {
 
 function copyJson() {
   navigator.clipboard.writeText(currentJson);
-  showMsg('JSON kopiran! Sada ga nalepi u puzzle.json na GitHubu.');
+  showMsg('JSON kopiran! Nalepi ga u puzzle.json na GitHubu.');
 }
 
 function renderEmbedCode() {
