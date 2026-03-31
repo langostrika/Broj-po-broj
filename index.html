@@ -381,12 +381,16 @@ function attachEvents() {
 
   document.getElementById('btn-hint').addEventListener('click', () => {
     if (gameFinished) return;
+    dragging = false;
     hintsUsed++;
     const sol = puzzle.solution;
     const step = Math.min(path.length, sol.length-1);
     const hint = sol[step];
     const el = getCell(hint.r, hint.c);
-    if (el) { el.style.outline='3px solid #e8642a'; setTimeout(()=>el.style.outline='',1200); }
+    if (el) {
+      el.style.outline='3px solid #e8642a';
+      setTimeout(() => { el.style.outline=''; }, 1200);
+    }
   });
 }
 
