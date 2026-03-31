@@ -164,8 +164,7 @@ async function init() {
     document.getElementById('moves-val').textContent = played.moves || '–';
     return;
   }
-
-  startTimer();
+  // tajmer kreće tek kada igrač povuče prvi potez (u startPath)
 }
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -179,7 +178,8 @@ function savePlayed(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(dat
 // ── GRID ──────────────────────────────────────────────────────────────────────
 function buildGrid() {
   const g = document.getElementById('grid');
-  const vw = Math.min(window.innerWidth - 32, 468);
+  const container = document.getElementById('grid-wrap');
+  const vw = Math.min(container.offsetWidth || window.innerWidth, 468) - 16;
   const cellSize = Math.floor((vw - (size-1)*3 - 6) / size);
   g.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
   g.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
@@ -246,6 +246,8 @@ function startPath(r, c) {
   if (gameFinished) return;
   const num = puzzle.numbers.find(n=>n.r===r&&n.c===c);
   if (!num || num.n !== 1) return;
+  // pokreni tajmer pri prvom potezu
+  if (!startTime) startTimer();
   path = [{r,c}];
   moves++;
   document.getElementById('moves-val').textContent = moves;
