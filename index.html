@@ -346,8 +346,15 @@ function attachEvents() {
   grid.addEventListener('mousedown', e => {
     if (gameFinished) return;
     const cell = e.target.closest('.cell'); if (!cell) return;
-    dragging = true; path = [];
-    startPath(+cell.dataset.r, +cell.dataset.c);
+    dragging = true;
+    const r = +cell.dataset.r, c = +cell.dataset.c;
+    if (!path.length) {
+      // nema puta — počni od 1
+      startPath(r, c);
+    } else {
+      // nastavi ili backtrack
+      extendPath(r, c);
+    }
   });
   grid.addEventListener('mousemove', e => {
     if (!dragging || gameFinished) return;
@@ -361,8 +368,13 @@ function attachEvents() {
     e.preventDefault();
     const t = e.touches[0];
     const cell = document.elementFromPoint(t.clientX,t.clientY)?.closest('.cell'); if (!cell) return;
-    dragging = true; path = [];
-    startPath(+cell.dataset.r, +cell.dataset.c);
+    dragging = true;
+    const r = +cell.dataset.r, c = +cell.dataset.c;
+    if (!path.length) {
+      startPath(r, c);
+    } else {
+      extendPath(r, c);
+    }
   }, {passive:false});
   grid.addEventListener('touchmove', e => {
     e.preventDefault();
