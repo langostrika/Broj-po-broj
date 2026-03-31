@@ -155,6 +155,9 @@ async function init() {
   size = puzzle.grid_size;
   document.getElementById('grid-size-label').textContent = size + '×' + size;
   buildGrid();
+  // Preračunaj grid nakon što se iframe potpuno učita
+  setTimeout(() => { if (puzzle) buildGrid(); }, 300);
+  window.addEventListener('resize', () => { if (puzzle) buildGrid(); });
 
   const played = getPlayed();
   if (played && played.date === puzzle.date) {
@@ -178,8 +181,8 @@ function savePlayed(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(dat
 // ── GRID ──────────────────────────────────────────────────────────────────────
 function buildGrid() {
   const g = document.getElementById('grid');
-  const container = document.getElementById('grid-wrap');
-  const vw = Math.min(container.offsetWidth || window.innerWidth, 468) - 16;
+  // Koristimo fiksnu širinu od 420px (iframe širina) minus padding
+  const vw = Math.min(420, window.innerWidth) - 32;
   const cellSize = Math.floor((vw - (size-1)*3 - 6) / size);
   g.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
   g.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
