@@ -119,7 +119,7 @@
 </div>
 
 <script>
-const PUZZLE_URL = 'https://raw.githubusercontent.com/langostrika/Broj-po-broj/main/puzzle.json';
+const REPO_BASE = 'https://raw.githubusercontent.com/langostrika/Broj-po-broj/main/puzzles/';
 const STORAGE_KEY = 'broj_po_broj_played';
 
 let puzzle = null, size = 5;
@@ -129,12 +129,21 @@ let gameFinished = false;
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
+  // Čitaj datum iz URL parametra ?date=2026-04-01
+  const params = new URLSearchParams(window.location.search);
+  const date = params.get('date');
+  if (!date) {
+    document.getElementById('status').textContent = 'Nije naveden datum zagonetke.';
+    return;
+  }
+
+  const url = REPO_BASE + date + '.json';
   try {
-    const res = await fetch(PUZZLE_URL + '?t=' + Date.now());
+    const res = await fetch(url + '?t=' + Date.now());
     if (!res.ok) throw new Error();
     puzzle = await res.json();
   } catch(e) {
-    document.getElementById('status').textContent = 'Nema dostupne zagonetke. Probaj sutra!';
+    document.getElementById('status').textContent = 'Zagonetka za ovaj datum nije pronađena.';
     return;
   }
 
@@ -165,8 +174,8 @@ function formatDate(s) {
   const d = new Date(s + 'T12:00:00');
   return d.toLocaleDateString('sr-Latn-RS', { day:'numeric', month:'long', year:'numeric' });
 }
-function getPlayed() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; } }
-function savePlayed(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function getPlayed() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY + '_' + puzzle.date)); } catch { return null; } }
+function savePlayed(data) { localStorage.setItem(STORAGE_KEY + '_' + puzzle.date, JSON.stringify(data)); }
 
 // ── GRID ──────────────────────────────────────────────────────────────────────
 function buildGrid() {
