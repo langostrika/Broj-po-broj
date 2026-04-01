@@ -60,10 +60,7 @@
   /* STATUS */
   #status{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:.9rem;letter-spacing:1px;text-transform:uppercase}
 
-  /* PLAYED MSG */
-  #played-msg{display:none;background:var(--bg2);border:2px solid var(--bg3);border-radius:8px;padding:16px;text-align:center;margin:8px 0;width:100%}
-  #played-msg h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
-  #played-msg p{font-size:.8rem;color:var(--text-muted)}
+
 
   /* OVERLAY */
   #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;justify-content:center;align-items:center}
@@ -97,10 +94,7 @@
     <div id="game" style="display:none;flex-direction:column;align-items:center;width:100%">
       <div id="grid-wrap"><div id="grid"></div></div>
 
-      <div id="played-msg">
-        <h3>Već si rešio/la zagonetku!</h3>
-        <p>Vrati se sutra za novu mozgalicu.</p>
-      </div>
+
     </div>
   </div>
 </div>
@@ -157,15 +151,6 @@ async function init() {
   // Preračunaj grid nakon što se iframe potpuno učita
   setTimeout(() => { if (puzzle) buildGrid(); }, 300);
   window.addEventListener('resize', () => { if (puzzle) buildGrid(); });
-
-  const played = getPlayed();
-  if (played && played.date === puzzle.date) {
-    renderSolution(played.solution);
-    document.getElementById('played-msg').style.display = 'block';
-    document.getElementById('timer-val').textContent = played.time || '–';
-    document.getElementById('moves-val').textContent = played.moves || '–';
-    return;
-  }
   // tajmer kreće tek kada igrač povuče prvi potez (u startPath)
 }
 
@@ -174,8 +159,7 @@ function formatDate(s) {
   const d = new Date(s + 'T12:00:00');
   return d.toLocaleDateString('sr-Latn-RS', { day:'numeric', month:'long', year:'numeric' });
 }
-function getPlayed() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY + '_' + puzzle.date)); } catch { return null; } }
-function savePlayed(data) { localStorage.setItem(STORAGE_KEY + '_' + puzzle.date, JSON.stringify(data)); }
+
 
 // ── GRID ──────────────────────────────────────────────────────────────────────
 function buildGrid() {
@@ -321,7 +305,6 @@ function checkWin() {
   stopTimer();
   path.forEach(({r,c}) => getCell(r,c)?.classList.add('complete'));
   const elapsed = timerVal();
-  savePlayed({ date: puzzle.date, solution: path, moves, time: elapsed, hints: hintsUsed });
   setTimeout(() => showWin(elapsed), 500);
 }
 
